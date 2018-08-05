@@ -1,0 +1,22 @@
+{
+  "name": "flashcards",
+  "version": "1.0.0",
+  "description": "Flash Cards for CS 602",
+  "main": "index.js",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.3",
+    "express-handlebars": "^3.0.0",
+    "mongoose": "^5.2.6"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://git.heroku.com/stark-wildwood-97446.git"
+  },
+  "author": "Jessica Roy",
+  "license": "ISC"
+}
