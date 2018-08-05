@@ -14,6 +14,7 @@ router.get('/', (req, res, next) => {
   res.redirect('/home');
 });
 
+router.get('/home', mainModule.home);
 router.get('/all', mainModule.displayAll);
 router.get('/add', mainModule.add);
 router.post('/add', mainModule.save);
