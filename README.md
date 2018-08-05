@@ -24,7 +24,7 @@ To run this **remotely**, you can edit the credentials.js file to comment out th
 
 1. To start the web server, run this from the top level folder:
 
-    `node ./app.js`
+    `node ./index.js`
     
 
 2. If you are running locally, you can access the web server at:
