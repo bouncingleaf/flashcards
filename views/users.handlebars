@@ -6,7 +6,6 @@
     <table class="table table-bordered">
       <thead>
         <tr>
-          <th>User ID</th>
           <th>User Name</th>
           <th></th>
         </tr>
@@ -14,8 +13,8 @@
       <tbody>
         {{#each data}}
         <tr>
-          <td>{{this.userName}}</td>
-          <td><a href="/admin/cards/{{this.userID}}">Manage User</a></td>
+          <td>{{this.name}}</td>
+          <td><a href="/user/{{this._id}}">Manage User</a></td>
         </tr>
         {{/each}}
       </tbody>
@@ -43,7 +42,7 @@
             <td></td>
             <td>
               <input type="submit" value="Save" class="btn btn-primary">
-              <input type="button" value="Cancel" class="btn btn-secondary" onclick="cancelAdd('/adminUsers')">
+              <input type="button" value="Cancel" class="btn btn-secondary" onclick="cancelAdd()">
             </td>
           </tr>
         </tfooter>

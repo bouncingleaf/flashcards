@@ -1,0 +1,45 @@
+<div class="container">
+  <div class="row">
+    <h5>Add a new card</h5>
+  </div>
+  <div class="row">
+    <form method="POST" action="/addCard">
+      <label for="front">Front:</label>
+      <input type="text" name="front" size="30" required>
+      <br>
+      <label class="label" for="back">Back:</label>
+      <input type="text" name="back" size="30" required>
+      <br>
+      <input type="submit" value="Save" class="btn btn-primary">
+      <input type="button" value="Cancel" class="btn btn-secondary" onclick="cancelAdd()">
+    </form>
+  <div class="row">
+    <h5>Cards already in deck</h5>
+  </div>
+  </div>
+    <div class="row">
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Card Front</th>
+          <th>Card Back</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each data.cards}}
+        <tr>
+          <td>{{this.name}}</td>
+          <td><a href="/cards/{{this._id}}">TBD</a></td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+  <br>
+  <div class="row">
+    <p>
+      <a href="/users">Manage Users</a>
+    </p>
+  </div>
+</div>

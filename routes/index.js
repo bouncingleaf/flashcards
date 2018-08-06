@@ -14,15 +14,21 @@ router.get('/', (req, res, next) => {
   res.redirect('/home');
 });
 
+// User routes
 router.get('/home', mainModule.home);
-router.get('/all', mainModule.displayAll);
-router.get('/add', mainModule.add);
-router.post('/add', mainModule.saveCard);
 router.get('/privacy', mainModule.privacy);
 
-router.get('/admin', mainModule.adminDecks);
-router.get('/adminDecks', mainModule.adminDecks);
-router.get('/adminCards', mainModule.adminCards);
-router.get('/adminUsers', mainModule.adminUsers);
+// Admin routes
+router.get('/admin', mainModule.decks);
+router.get('/cards', mainModule.decks);
+router.get('/cards/:deckID', mainModule.cards);
+router.get('/decks', mainModule.decks);
+router.get('/users', mainModule.users);
+
+
+router.post('/addCard/:deckID', mainModule.saveCard);
+router.post('/addDeck', mainModule.saveDeck);
+router.post('/addUser', mainModule.saveUser);
+
 
 module.exports = router;

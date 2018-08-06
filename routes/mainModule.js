@@ -8,6 +8,7 @@
 const DB = require('./dbConnection.js');
 const models = DB.getModels();
 
+
 // User screens
 
 module.exports.home = (req, res, next) => {
@@ -20,55 +21,123 @@ module.exports.privacy = (req, res, next) => {
 
 // Admin Screens
 
-module.exports.adminDecks = (req, res, next) => {
-  res.render('admin/decks', { title: "Admin Decks"});
-};
-
-module.exports.adminCards = (req, res, next) => {
-  res.render('admin/cards', { title: "Admin Cards"});
-};
-
-module.exports.adminUsers = (req, res, next) => {
-  res.render('admin/users', { title: "Admin Users"});
-};
-
-module.exports.add = (req, res, next) => {
+module.exports.cards = (req, res, next) => {
   res.render('addView', { title: "Add" });
-};
+  let deckID = req.params.deckID;
+  let deckName = null;
 
-module.exports.saveCard =
-(req, res, next) => {
-  
-  let item = new models.card({
-    cardFront: req.body.front,
-    cardBack: req.body.last
-  });
-  
-  // item.save((err) => {
-  //   if (err)
-  //   console.log("Error : %s ", err);
-  //   res.redirect('/all');
-  // });
-  res.render('404');
-  
-};
-
-module.exports.displayAll =
-(req, res, next) => {
-  
-  MyModel.find({}, (err, data) => {
+  models.deck.findById(deckID, (err, deck) => {
     if (err)
-    console.log("Error : %s ", err);
-    
-    let results = data.map((item) => {
+      console.log("Error identifying deck: %s", err);
+    if (!deck)
+      return res.render('404');
+    deckName = deck.name;
+  });
+
+  models.card.find({deck: deckID}, (err, cards) => {
+    if (err)
+      console.log("Error Selecting : %s ", err);
+    if (!cards)
+      return res.render('404');
+
+      let results = cards.map((card) => {
       return {
-        lastName: item.lastName,
-        firstName: item.firstName,
-        id: item._id,
+        front: card.front,
+        back: card.back,
+        id: card._id
       };
     });
-    
-    res.render('displayView',
-    { title: "Some stuff", data: results });
+
+    res.render('/cards/' + deckID, {
+      title: "Cards for " + deckName,
+      data: results,
+      layout: 'admin'
+    });
   });
+};
+
+module.exports.decks = (req, res, next) => {
+  models.deck.find({}, (err, decks) => {
+    if (err)
+      console.log("Error : %s ", err);
+
+    let results = decks.map((deck) => {
+      return {
+        name: deck.name,
+        id: deck._id,
+      };
+    });
+
+    res.render('decks', { 
+      title: "Decks", 
+      data: results,
+      layout: 'admin'
+    });
+  });
+};
+
+module.exports.users = (req, res, next) => {
+  models.user.find({}, (err, users) => {
+    if (err) {
+      console.log("Error : %s ", err);
+    } else {
+    let results = users.map((user) => {
+      return {
+        name: user.name,
+        id: user._id,
+      };
+    });
+
+    }
+    res.render('users', {
+      title: "Users",
+      data: results,
+      layout: 'admin'
+    });
+  });
+};
+
+module.exports.saveCard = (req, res, next) => {
+
+  let deckID = req.params.deckID;
+  
+  // Make and save the new card
+  let item = new models.card({
+    deck: deckID,
+    front: req.body.front,
+    back: req.body.last
+  });
+  
+  item.save((err) => {
+    if (err)
+      console.log("Error : %s ", err);
+    res.render('/cards/' + deckID);
+  });
+};
+
+module.exports.saveDeck = (req, res, next) => {
+  
+  let item = new models.deck({
+    name: req.body.name
+  });
+
+  item.save((err) => {
+    if (err)
+      console.log("Error : %s ", err);
+    res.redirect('/decks');
+  });
+};
+
+module.exports.saveUser = (req, res, next) => {
+  
+  let item = new models.user({
+    name: req.body.name
+  });
+  
+  item.save((err) => {
+    if (err)
+      console.log("Error : %s ", err);
+    res.redirect('/users');
+  });
+  
 };

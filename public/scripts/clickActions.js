@@ -7,6 +7,6 @@ function add(){
     window.location.href = '/add';
 }
 
-function cancelAdd(newPage){
-    window.location.href = newPage || '/all';
+function cancelAdd(){
+    window.location.href = '/admin';
 }
