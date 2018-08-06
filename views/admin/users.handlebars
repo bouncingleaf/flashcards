@@ -1,0 +1,53 @@
+<div class="container">
+  <div class="row">
+    <h5>Existing Users</h5>
+  </div>
+    <div class="row">
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>User ID</th>
+          <th>User Name</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each data}}
+        <tr>
+          <td>{{this.userName}}</td>
+          <td><a href="/admin/cards/{{this.userID}}">Manage User</a></td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+  <br>
+  <div class="row">
+    <h5>Add a new user</h5>
+  </div>
+  <div class="row">
+    <form method="POST" action="/addUser">
+      <table>
+        <tbody>
+          <tr>
+            <th>
+              <label for="userName">User Name:</label>
+            </th>
+            <td>
+              <input type="text" name="userName" size="30" required>
+            </td>
+          </tr>
+        </tbody>
+        <tfooter>
+          <tr>
+            <td></td>
+            <td>
+              <input type="submit" value="Save" class="btn btn-primary">
+              <input type="button" value="Cancel" class="btn btn-secondary" onclick="cancelAdd('/adminUsers')">
+            </td>
+          </tr>
+        </tfooter>
+      </table>
+    </form>
+  </div>
+</div>

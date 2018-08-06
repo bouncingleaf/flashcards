@@ -17,7 +17,12 @@ router.get('/', (req, res, next) => {
 router.get('/home', mainModule.home);
 router.get('/all', mainModule.displayAll);
 router.get('/add', mainModule.add);
-router.post('/add', mainModule.save);
+router.post('/add', mainModule.saveCard);
 router.get('/privacy', mainModule.privacy);
+
+router.get('/admin', mainModule.adminDecks);
+router.get('/adminDecks', mainModule.adminDecks);
+router.get('/adminCards', mainModule.adminCards);
+router.get('/adminUsers', mainModule.adminUsers);
 
 module.exports = router;

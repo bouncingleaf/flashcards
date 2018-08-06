@@ -1,0 +1,53 @@
+<div class="container">
+  <div class="row">
+    <h5>Existing Decks</h5>
+  </div>
+    <div class="row">
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Deck ID</th>
+          <th>Deck Name</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each data}}
+        <tr>
+          <td>{{this.deckName}}</td>
+          <td><a href="/admin/cards/{{this.deckID}}">Manage Deck</a></td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+  <br>
+  <div class="row">
+    <h5>Add a new deck</h5>
+  </div>
+  <div class="row">
+    <form method="POST" action="/addDeck">
+      <table>
+        <tbody>
+          <tr>
+            <th>
+              <label for="deckName">Deck Name:</label>
+            </th>
+            <td>
+              <input type="text" name="deckName" size="30" required>
+            </td>
+          </tr>
+        </tbody>
+        <tfooter>
+          <tr>
+            <td></td>
+            <td>
+              <input type="submit" value="Save" class="btn btn-primary">
+              <input type="button" value="Cancel" class="btn btn-secondary" onclick="cancelAdd('/adminDecks')">
+            </td>
+          </tr>
+        </tfooter>
+      </table>
+    </form>
+  </div>
+</div>

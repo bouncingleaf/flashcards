@@ -6,11 +6,9 @@
 /* jshint esversion: 6 */
 
 const DB = require('./dbConnection.js');
-const MyModel = DB.getModel();
+const models = DB.getModels();
 
-module.exports.add = (req, res, next) => {
-  res.render('addView', { title: "Add" });
-};
+// User screens
 
 module.exports.home = (req, res, next) => {
   res.render('home', { title: "Home" });
@@ -20,19 +18,38 @@ module.exports.privacy = (req, res, next) => {
   res.render('privacy', { title: "Privacy" });
 };
 
-module.exports.save =
+// Admin Screens
+
+module.exports.adminDecks = (req, res, next) => {
+  res.render('admin/decks', { title: "Admin Decks"});
+};
+
+module.exports.adminCards = (req, res, next) => {
+  res.render('admin/cards', { title: "Admin Cards"});
+};
+
+module.exports.adminUsers = (req, res, next) => {
+  res.render('admin/users', { title: "Admin Users"});
+};
+
+module.exports.add = (req, res, next) => {
+  res.render('addView', { title: "Add" });
+};
+
+module.exports.saveCard =
 (req, res, next) => {
   
-  let item = new MyModel({
-    firstName: req.body.first,
-    lastName: req.body.last
+  let item = new models.card({
+    cardFront: req.body.front,
+    cardBack: req.body.last
   });
   
-  item.save((err) => {
-    if (err)
-    console.log("Error : %s ", err);
-    res.redirect('/all');
-  });
+  // item.save((err) => {
+  //   if (err)
+  //   console.log("Error : %s ", err);
+  //   res.redirect('/all');
+  // });
+  res.render('404');
   
 };
 
