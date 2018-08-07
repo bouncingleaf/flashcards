@@ -22,7 +22,6 @@ module.exports.privacy = (req, res, next) => {
 // Admin Screens
 
 module.exports.cards = (req, res, next) => {
-  res.render('addView', { title: "Add" });
   let deckID = req.params.deckID;
   let deckName = null;
 
@@ -50,6 +49,7 @@ module.exports.cards = (req, res, next) => {
 
     res.render('/cards/' + deckID, {
       title: "Cards for " + deckName,
+      deckID: deckID,
       data: results,
       layout: 'admin'
     });
@@ -78,9 +78,8 @@ module.exports.decks = (req, res, next) => {
 
 module.exports.users = (req, res, next) => {
   models.user.find({}, (err, users) => {
-    if (err) {
+    if (err)
       console.log("Error : %s ", err);
-    } else {
     let results = users.map((user) => {
       return {
         name: user.name,
@@ -88,7 +87,6 @@ module.exports.users = (req, res, next) => {
       };
     });
 
-    }
     res.render('users', {
       title: "Users",
       data: results,

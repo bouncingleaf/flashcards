@@ -1,5 +1,18 @@
 <div class="container">
   <div class="row">
+    <h5>Add a new user</h5>
+  </div>
+  <div class="row">
+    <form method="POST" action="/addUser">
+              <label for="name">User Name:</label>
+              <input type="text" name="name" size="30" required>
+              <br>
+              <input type="submit" value="Save" class="btn btn-primary">
+              <input type="button" value="Cancel" class="btn btn-secondary" onclick="cancelAdd()">
+    </form>
+  </div>
+  <br>
+  <div class="row">
     <h5>Existing Users</h5>
   </div>
     <div class="row">
@@ -19,34 +32,5 @@
         {{/each}}
       </tbody>
     </table>
-  </div>
-  <br>
-  <div class="row">
-    <h5>Add a new user</h5>
-  </div>
-  <div class="row">
-    <form method="POST" action="/addUser">
-      <table>
-        <tbody>
-          <tr>
-            <th>
-              <label for="userName">User Name:</label>
-            </th>
-            <td>
-              <input type="text" name="userName" size="30" required>
-            </td>
-          </tr>
-        </tbody>
-        <tfooter>
-          <tr>
-            <td></td>
-            <td>
-              <input type="submit" value="Save" class="btn btn-primary">
-              <input type="button" value="Cancel" class="btn btn-secondary" onclick="cancelAdd()">
-            </td>
-          </tr>
-        </tfooter>
-      </table>
-    </form>
   </div>
 </div>

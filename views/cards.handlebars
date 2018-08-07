@@ -3,7 +3,7 @@
     <h5>Add a new card</h5>
   </div>
   <div class="row">
-    <form method="POST" action="/addCard">
+    <form method="POST" action="/addCard/{{deckId}}">
       <label for="front">Front:</label>
       <input type="text" name="front" size="30" required>
       <br>
@@ -30,7 +30,7 @@
         {{#each data.cards}}
         <tr>
           <td>{{this.name}}</td>
-          <td><a href="/cards/{{this._id}}">TBD</a></td>
+          <td><a href="/cards/{{this.id}}">TBD</a></td>
         </tr>
         {{/each}}
       </tbody>

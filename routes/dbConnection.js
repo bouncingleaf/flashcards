@@ -38,7 +38,7 @@ const MyDeckSchema = new Schema({
     cards: [Schema.Types.ObjectId]           // cards at this level
   }],
   day: Number                             // What day the user is on, e.g. "3"
-})
+});
 
 module.exports.getModels = 
 	() => {
