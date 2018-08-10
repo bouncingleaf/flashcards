@@ -1,16 +1,16 @@
 <div class="container">
   <div class="row">
-    <h5>Add a new card</h5>
+    <h5>Add deck for user</h5>
   </div>
   <div class="row">
-    <form method="POST" action="/addCard/{{deckId}}">
+    <form method="POST" action="/addUserDeck/{{userId}}">
       <div class="form-group">
-        <label for="front">Front:</label>
-        <input class="form-control" type="text" name="front" size="30" required>
-        <br>
-        <label class="label" for="back">Back:</label>
-        <input class="form-control" type="text" name="back" size="30" required>
-        <br>
+      <label for="deck">Deck:</label>
+      <select name="deck">
+        {{#each data.decks}}
+          <option value="{{this.id}}">{{this.name}}</option>
+        {{/each}}
+      </select>
         <input type="submit" value="Save" class="btn btn-primary">
         <input type="button" value="Cancel" class="btn btn-secondary" onclick="cancelAdd()">
       </div>
@@ -18,24 +18,23 @@
   </div>
   <hr>
   <div class="row">
-    <h5>Cards already in deck</h5>
+    <h5>Decks for user {{data.userName}}</h5>
   </div>
   <div class="row">
     <table class="table table-bordered">
       <thead>
         <tr>
-          <th>Card Front</th>
-          <th>Card Back</th>
+          <th>Deck Name</th>
         </tr>
       </thead>
       <tbody>
-        {{#each data}}
+        {{#each data.userDecks}}
         <tr>
-          <td>{{this.front}}</td>
-          <td>{{this.back}}</td>
+          <td>{{this.name}}</td>
         </tr>
         {{/each}}
       </tbody>
     </table>
   </div>
+  <br>
 </div>

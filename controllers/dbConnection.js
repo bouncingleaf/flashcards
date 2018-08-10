@@ -30,7 +30,7 @@ const UserSchema = new Schema({
   name: String,                           // "jdoe"
 });
 
-const MyDeckSchema = new Schema({
+const UserDeckSchema = new Schema({
   user: Schema.Types.ObjectId,            // The user who is studying this deck
   deck: Schema.Types.ObjectId,            // The deck the user is studying
   levels: [{                              // Card groupings
@@ -48,7 +48,7 @@ module.exports.getModels =
 			  card: connection.model("Card",	CardSchema),
         deck: connection.model("Deck", DeckSchema),
 			  user: connection.model("User",	UserSchema),
-        myDeck: connection.model("MyDeck",	MyDeckSchema)
+        userDeck: connection.model("UserDeck",	UserDeckSchema)
       };
     }
 		return models;

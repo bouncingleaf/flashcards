@@ -1,5 +1,5 @@
 /**
-* The mainModule file for final project
+* The main controller file for final project
 * @author Jessica Roy
 */
 
@@ -22,10 +22,10 @@ module.exports.privacy = (req, res, next) => {
 // Admin Screens
 
 module.exports.cards = (req, res, next) => {
-  let deckID = req.params.deckID;
+  let deckId = req.params.deckId;
   let deckName = null;
 
-  models.deck.findById(deckID, (err, deck) => {
+  models.deck.findById(deckId, (err, deck) => {
     if (err)
       console.log("Error identifying deck: %s", err);
     if (!deck)
@@ -33,7 +33,7 @@ module.exports.cards = (req, res, next) => {
     deckName = deck.name;
   });
 
-  models.card.find({deck: deckID}, (err, cards) => {
+  models.card.find({deck: deckId}, (err, cards) => {    
     if (err)
       console.log("Error Selecting : %s ", err);
     if (!cards)
@@ -47,11 +47,10 @@ module.exports.cards = (req, res, next) => {
       };
     });
 
-    res.render('/cards/' + deckID, {
-      title: "Cards for " + deckName,
-      deckID: deckID,
-      data: results,
-      layout: 'admin'
+    res.render('cards', {
+      title: "Cards for deck: " + deckName,
+      deckId: deckId,
+      data: results
     });
   });
 };
@@ -70,8 +69,7 @@ module.exports.decks = (req, res, next) => {
 
     res.render('decks', { 
       title: "Decks", 
-      data: results,
-      layout: 'admin'
+      data: results
     });
   });
 };
@@ -89,27 +87,60 @@ module.exports.users = (req, res, next) => {
 
     res.render('users', {
       title: "Users",
-      data: results,
-      layout: 'admin'
+      data: results
+    });
+  });
+};
+
+module.exports.user = (req, res, next) => {
+  let userId = req.params.userId;
+  let userName = null;
+
+  models.user.findById(userId, (err, user) => {
+    if (err)
+      console.log("Error identifying user: %s", err);
+    if (!user)
+      return res.render('404');
+    userName = user.name;
+  });
+
+  models.myDeck.find({user: userId}, (err, myDecks) => {    
+    if (err)
+      console.log("Error Selecting : %s ", err);
+    if (!myDecks)
+      return res.render('404');
+
+      let results = myDecks.map((myDeck) => {
+      return {
+        name: myDeck.name,
+        id: myDeck._id
+      };
+    });
+
+    res.render('user', {
+      title: "Decks for user: " + userName,
+      userId: userId,
+      userName: userName,
+      data: results
     });
   });
 };
 
 module.exports.saveCard = (req, res, next) => {
 
-  let deckID = req.params.deckID;
+  let deckId = req.params.deckId;
   
   // Make and save the new card
   let item = new models.card({
-    deck: deckID,
+    deck: deckId,
     front: req.body.front,
-    back: req.body.last
+    back: req.body.back
   });
   
   item.save((err) => {
     if (err)
       console.log("Error : %s ", err);
-    res.render('/cards/' + deckID);
+    res.redirect('/cards/' + deckId);
   });
 };
 
@@ -136,6 +167,20 @@ module.exports.saveUser = (req, res, next) => {
     if (err)
       console.log("Error : %s ", err);
     res.redirect('/users');
+  });
+  
+};
+
+module.exports.saveMyDeck = (req, res, next) => {
+  
+  let item = new models.myDeck({
+    name: req.body.name
+  });
+  
+  item.save((err) => {
+    if (err)
+      console.log("Error : %s ", err);
+    res.redirect('/user');
   });
   
 };

@@ -4,7 +4,9 @@
   "description": "Flash Cards for CS 602",
   "main": "app.js",
   "dependencies": {
+    "ajv": "^6.5.2",
     "body-parser": "^1.18.3",
+    "dotenv": "^6.0.0",
     "express": "^4.16.3",
     "express-handlebars": "^3.0.0",
     "mongoose": "^5.2.6"

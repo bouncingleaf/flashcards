@@ -7,7 +7,10 @@
 
 const express = require('express');
 const router = express.Router();
-const mainModule = require("./mainModule");
+const main = require("../controllers/main");
+const cards = require("../controllers/cards");
+const decks = require("../controllers/decks");
+const users = require("../controllers/users");
 
 // router specs
 router.get('/', (req, res, next) => {
@@ -15,20 +18,21 @@ router.get('/', (req, res, next) => {
 });
 
 // User routes
-router.get('/home', mainModule.home);
-router.get('/privacy', mainModule.privacy);
+router.get('/home', main.home);
+router.get('/privacy', main.privacy);
+router.get('/quiz', main.quiz);
 
 // Admin routes
-router.get('/admin', mainModule.decks);
-router.get('/cards', mainModule.decks);
-router.get('/cards/:deckID', mainModule.cards);
-router.get('/decks', mainModule.decks);
-router.get('/users', mainModule.users);
+router.get('/admin', decks.decks);
+router.get('/cards/:deckId', cards.cards);
+router.get('/cards', decks.decks);
+router.get('/decks', decks.decks);
+router.get('/users', users.users);
+router.get('/user/:userId', users.user);
 
-
-router.post('/addCard/:deckID', mainModule.saveCard);
-router.post('/addDeck', mainModule.saveDeck);
-router.post('/addUser', mainModule.saveUser);
-
+router.post('/addCard/:deckId', cards.saveCard);
+router.post('/addDeck', decks.saveDeck);
+router.post('/addUser', users.saveUser);
+router.post('/addUserDeck', users.saveUserDeck);
 
 module.exports = router;

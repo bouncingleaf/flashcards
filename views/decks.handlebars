@@ -4,11 +4,13 @@
   </div>
   <div class="row">
     <form method="POST" action="/addDeck">
+      <div class="form-group">
       <label for="name">Deck Name:</label>
-      <input type="text" name="name" size="30" required>
+      <input class="form-control" type="text" name="name" size="30" required>
       <br><br>
       <input type="submit" value="Save" class="btn btn-primary">
       <input type="button" value="Cancel" class="btn btn-secondary" onclick="cancelAdd()">
+      </div>
     </form>
   </div>
   <br>
@@ -32,11 +34,5 @@
         {{/each}}
       </tbody>
     </table>
-  </div>
-  <br>
-  <div class="row">
-    <p>
-      <a href="/users">Manage Users</a>
-    </p>
   </div>
 </div>
