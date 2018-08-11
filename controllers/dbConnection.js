@@ -28,6 +28,7 @@ const DeckSchema = new Schema({
 
 const UserDeckSchema = new Schema({
   deck: Schema.Types.ObjectId,            // The deck the user is studying
+  name: String,                           // Name of the deck
   active: Boolean,                        // Is the user actively studying this?
   levels: [{                              // Card groupings
     level: Number,                           // level = 0-8

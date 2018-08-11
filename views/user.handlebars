@@ -1,31 +1,11 @@
 <div class="container">
   <div class="row">
-    <h5>Add deck for user</h5>
-  </div>
-  <div class="row">
-    <form method="POST" action="/addUserDeck/{{userId}}">
-      <div class="form-group">
-      <label for="deck">Deck:</label>
-      <select name="deck">
-        {{#each decks}}
-          <option value="{{this.id}}">{{this.name}}</option>
-        {{/each}}
-      </select>
-        <input type="submit" value="Save" class="btn btn-primary">
-        <input type="button" value="Cancel" class="btn btn-secondary" onclick="cancelAdd()">
-      </div>
-    </form>
-  </div>
-  <hr>
-  <div class="row">
-    <h5>Decks for user {{data.userName}}</h5>
-  </div>
-  <div class="row">
     <table class="table table-bordered">
       <thead>
         <tr>
           <th>Deck Name</th>
           <th>Review Day</th>
+          <th>Status</th>
         </tr>
       </thead>
       <tbody>
@@ -33,6 +13,14 @@
         <tr>
           <td>{{this.name}}</td>
           <td>{{this.day}}</td>
+          <td>
+            <form method="POST" action="/toggleUserDeck">
+            <input type="hidden" value="{{../userId}}" name="userId">
+            <input type="hidden" value="{{this.id}}" name="deckId">
+            <input type="submit" value="{{this.status}}" class="btn btn-link">
+            </form>
+          </td>
+          <td>Practice</td>
         </tr>
         {{/each}}
       </tbody>
