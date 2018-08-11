@@ -11,8 +11,7 @@ const Deck = DB.getModels().deck;
 
 module.exports.decks = (req, res, next) => {
   Deck.find({}, (err, decks) => {
-    if (err)
-      console.log("Error : %s ", err);
+    if (err) error("could not find deck", err);
 
     let results = decks.map((deck) => {
       return {
@@ -35,8 +34,11 @@ module.exports.saveDeck = (req, res, next) => {
   });
 
   item.save((err) => {
-    if (err)
-      console.log("Error : %s ", err);
+    if (err) error("could not save deck", err);
     res.redirect('/decks');
   });
 };
+
+function error(msg, err) {
+  console.log(`Error ${msg} : ${err}`);
+}

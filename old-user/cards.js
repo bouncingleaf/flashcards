@@ -16,16 +16,14 @@ module.exports.cards = (req, res, next) => {
   let deckName = null;
 
   Deck.findById(deckId, (err, deck) => {
-    if (err)
-      console.log("Error identifying deck: %s", err);
+    if (err) error("could not identify deck", err);
     if (!deck)
       return res.render('404');
     deckName = deck.name;
   });
 
   Card.find({deck: deckId}, (err, cards) => {    
-    if (err)
-      console.log("Error Selecting : %s ", err);
+    if (err) error("could not find cards ", err);
     if (!cards)
       return res.render('404');
 
@@ -57,8 +55,11 @@ module.exports.saveCard = (req, res, next) => {
   });
   
   item.save((err) => {
-    if (err)
-      console.log("Error : %s ", err);
+    if (err) error("could not save card", err);
     res.redirect('/cards/' + deckId);
   });
 };
+
+function error(msg, err) {
+  console.log(`Error ${msg} : ${err}`);
+}

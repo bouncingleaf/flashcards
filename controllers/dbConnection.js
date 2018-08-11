@@ -30,10 +30,7 @@ const UserDeckSchema = new Schema({
   deck: Schema.Types.ObjectId,            // The deck the user is studying
   name: String,                           // Name of the deck
   active: Boolean,                        // Is the user actively studying this?
-  levels: [{                              // Card groupings
-    level: Number,                           // level = 0-8
-    cards: [Schema.Types.ObjectId]           // cards at this level
-  }],
+  levels: [[Schema.Types.ObjectId]],      // Cards for each level 0-8
   day: Number,                            // What day the user is on, e.g. "3"
   lastPracticedOn: Date                   // When the user last practiced this deck
 });
