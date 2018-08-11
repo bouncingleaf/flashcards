@@ -8,6 +8,7 @@
 const DB = require('./dbConnection.js');
 const models = DB.getModels();
 
+// Set up the users page
 module.exports.users = (req, res, next) => {
   models.user.find({}, (err, users) => {
     if (err) error('could not find user ' + userId, err);
@@ -25,7 +26,7 @@ module.exports.users = (req, res, next) => {
   });
 };
 
-// Get data for a page for a single user
+// Set up the page for a single user
 module.exports.user = (req, res, next) => {
   userUpdateDecks(req, res, next);
   let userId = req.params.userId;
@@ -100,7 +101,6 @@ module.exports.toggleUserDeck = (req, res, next) => {
     else {
       let deckId = req.body.deckId;
       let match = user.userDecks.find(deck => {
-        console.log(deck.deck.toString(), deckId);
         return deck.deck.toString() == deckId;
       });
       if (!match) error('could not find deck ' + deckId);
@@ -124,6 +124,7 @@ module.exports.toggleUserDeck = (req, res, next) => {
   });
 };
 
+// "Sign in" currently meaning "choose the user to be"
 module.exports.signIn = (req, res, next) => {
   let userName = req.body.name;
   
@@ -150,7 +151,29 @@ module.exports.signIn = (req, res, next) => {
       // });
       }
   });
-}
+};
+
+module.exports.practice = (req, res, next) => {
+  
+  let userId = req.body.userId;
+  models.user.findById(userId, (err, user) => {
+    if (err || !user) error('could not find user ' + userId, err);
+    else {
+      let deckId = req.body.deckId;
+      let match = user.userDecks.find(deck => {
+        return deck.deck.toString() == deckId;
+      });
+      if (!match) error('could not find deck ' + deckId);
+      else {
+        res.render('practice', { 
+          title: 'Practicing ' + match.name,
+          userId: userId,
+          data: match
+        });
+      }
+    }
+  });
+};
 
 newUserDeck = deck => new models.userDeck({
     active: false,

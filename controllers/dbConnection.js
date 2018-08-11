@@ -34,7 +34,8 @@ const UserDeckSchema = new Schema({
     level: Number,                           // level = 0-8
     cards: [Schema.Types.ObjectId]           // cards at this level
   }],
-  day: Number                             // What day the user is on, e.g. "3"
+  day: Number,                            // What day the user is on, e.g. "3"
+  lastPracticedOn: Date                   // When the user last practiced this deck
 });
 
 const UserSchema = new Schema({

@@ -6,6 +6,7 @@
           <th>Deck Name</th>
           <th>Review Day</th>
           <th>Status</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
@@ -15,16 +16,21 @@
           <td>{{this.day}}</td>
           <td>
             <form method="POST" action="/toggleUserDeck">
-            <input type="hidden" value="{{../userId}}" name="userId">
-            <input type="hidden" value="{{this.id}}" name="deckId">
-            <input type="submit" value="{{this.status}}" class="btn btn-link">
+              <input type="hidden" value="{{../userId}}" name="userId">
+              <input type="hidden" value="{{this.id}}" name="deckId">
+              <input type="submit" value="{{this.status}}" class="btn btn-link">
             </form>
           </td>
-          <td>Practice</td>
+          <td>
+            <form method="POST" action="/practice">
+              <input type="hidden" value="{{../userId}}" name="userId">
+              <input type="hidden" value="{{this.id}}" name="deckId">
+              <input type="submit" value="Practice" class="btn btn-link">
+            </form>
+          </td>
         </tr>
         {{/each}}
       </tbody>
     </table>
   </div>
-  <br>
 </div>
