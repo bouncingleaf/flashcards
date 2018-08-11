@@ -26,18 +26,19 @@ const DeckSchema = new Schema({
   name: String,                           // "Spanish vocabulary" 
 });
 
-const UserSchema = new Schema({
-  name: String,                           // "jdoe"
-});
-
 const UserDeckSchema = new Schema({
-  user: Schema.Types.ObjectId,            // The user who is studying this deck
   deck: Schema.Types.ObjectId,            // The deck the user is studying
+  active: Boolean,                        // Is the user actively studying this?
   levels: [{                              // Card groupings
     level: Number,                           // level = 0-8
     cards: [Schema.Types.ObjectId]           // cards at this level
   }],
   day: Number                             // What day the user is on, e.g. "3"
+});
+
+const UserSchema = new Schema({
+  name: String,                           // "jdoe"
+  userDecks: [UserDeckSchema]             // Embedded subdocument
 });
 
 module.exports.getModels = 

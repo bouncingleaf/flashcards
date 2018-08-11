@@ -7,7 +7,7 @@
       <div class="form-group">
       <label for="deck">Deck:</label>
       <select name="deck">
-        {{#each data.decks}}
+        {{#each decks}}
           <option value="{{this.id}}">{{this.name}}</option>
         {{/each}}
       </select>
@@ -25,12 +25,14 @@
       <thead>
         <tr>
           <th>Deck Name</th>
+          <th>Review Day</th>
         </tr>
       </thead>
       <tbody>
-        {{#each data.userDecks}}
+        {{#each data}}
         <tr>
           <td>{{this.name}}</td>
+          <td>{{this.day}}</td>
         </tr>
         {{/each}}
       </tbody>

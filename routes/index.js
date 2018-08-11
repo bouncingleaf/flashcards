@@ -32,7 +32,7 @@ router.get('/user/:userId', users.user);
 
 router.post('/addCard/:deckId', cards.saveCard);
 router.post('/addDeck', decks.saveDeck);
-router.post('/addUser', users.saveUser);
+router.post('/addUser', users.saveNewUser);
 router.post('/addUserDeck', users.saveUserDeck);
 
 module.exports = router;
