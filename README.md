@@ -31,26 +31,26 @@ To run this **remotely**, you can edit the credentials.js file to comment out th
 
     <http://localhost:3000>
 
-## How card levels work
+## How card review
 
 Each level represents how often we will review the cards:
-0 = not yet seen (not reviewed until they go up a level)
-1 = daily
-2 = every other day
-3 = every 4 days
-4 = every 8 days
-5 = every 16 days
-6 = every 32 days
-7 = every 64 days
-8 = retired (not reviewed anymore, the user has learned it)
+* not yet seen (not reviewed until they go up a level)
+* daily review
+* every other day
+* every 4 days
+* every 8 days
+* every 16 days
+* every 32 days
+* every 64 days
+* retired (not reviewed anymore, the user has learned it)
 
 Every time we load the user, we:
 1. Pull any new card IDs from the main deck into the user deck. 
-2. Add those new cards at level 0 (there may already be cards there).
+2. Add those new cards as "unseen" (there may already be cards there).
 
 Each day we:
-1. Move N (say, 20) cards from 0 into 1.
-2. Start prompting the user with the highest level cards they are due to review that day. 
+1. Move N (say, 20) cards from unseen into daily.
+2. Start prompting the user with the cards they are due to review that day. 
 3. If they get the card right, it goes up a level. If they don't, it goes down a level.
 
 ## Notes

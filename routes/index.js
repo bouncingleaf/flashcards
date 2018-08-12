@@ -8,8 +8,7 @@
 const express = require('express');
 const router = express.Router();
 const main = require("../controllers/main");
-// const cards = require("../controllers/cards");
-// const decks = require("../controllers/decks");
+const practice = require("../controllers/practice");
 const users = require("../controllers/users");
 
 // router specs
@@ -21,9 +20,10 @@ router.get('/', (req, res, next) => {
 router.get('/home', main.home);
 router.get('/privacy', main.privacy);
 router.get('/practice', main.home);
-router.post('/practice', users.practice);
+router.post('/practice', practice.start);
 router.get('/home/:userId', users.user);
 router.get('/user/:userId', users.user);
 router.post('/signIn', users.signIn);
+router.post('/toggleUserDeck', users.toggleUserDeck);
 
 module.exports = router;
