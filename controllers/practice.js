@@ -8,9 +8,13 @@
 const DB = require("./dbConnection.js");
 const models = DB.getModels();
 const moment = require("moment");
+let cardsToPractice;
+let currentCard;
+let pageTitle;
+let userId;
 
 module.exports.start = (req, res, next) => {
-  const userId = req.body.userId;
+  userId = req.body.userId;
   const deckId = req.body.deckId;
 
   models.user.findById(userId, (err, user) => {
@@ -23,15 +27,62 @@ module.exports.start = (req, res, next) => {
       );
       updateDeck(myDeck, user);
       levels = getLevelsToPractice(myDeck.day);
-      res.render("practice", {
-        title: `Practicing levels ${levels.toString()} of ${myDeck.name} (day ${
-          myDeck.day
-        })`,
-        userId: userId,
-        data: myDeck.myCards
+      const cardsToStudy = myDeck.myCards
+        .filter(card => levels.includes(card.level))
+        .map(card => card.card);
+      models.card.find({ _id: { $in: cardsToStudy } }, (err, cards) => {
+        if (err) error("unable to get cards to study", err);
+        if (!cards) res.render("404");
+        cardsToPractice = cards.map(card => {
+          return {
+            front: card.front,
+            back: card.back,
+            id: card._id
+          };
+        });
+        pageTitle = `${myDeck.name} (day ${myDeck.day})`;
+        if (cardsToPractice.length > 0) {
+          currentCard = cardsToPractice.pop();
+          res.render("practiceAsk", {
+            title: "Practicing " + pageTitle,
+            card: currentCard.front
+          });
+        } else {
+          res.render("practiceDone", {
+            title: "You're done practicing " + pageTitle,
+            userId: userId
+          });
+        }
       });
     }
   });
+};
+
+// They want to see the answer
+module.exports.answer = (req, res, next) => {
+  console.log(`you clicked answer`);
+  res.render("practiceAnswer", {
+    title: "Practicing " + pageTitle,
+    front: currentCard.front,
+    back: currentCard.back
+  });
+};
+
+// They saw the answer, for better or worse, ask again
+module.exports.ask = (req, res, next) => {
+  console.log("you clicked ask", req.params, currentCard);
+  if (cardsToPractice.length > 0) {
+    currentCard = cardsToPractice.pop();
+    res.render("practiceAsk", {
+      title: "Practicing " + pageTitle,
+      card: currentCard.front
+    });
+  } else {
+    res.render("practiceDone", {
+      title: "You're done practicing " + pageTitle,
+      userId: userId
+    });
+  }
 };
 
 function updateDeck(myDeck, user) {
@@ -67,7 +118,6 @@ function updateDeck(myDeck, user) {
       !myDeck.lastPracticedOn ||
       moment().isAfter(myDeck.lastPracticedOn.add(WAIT_TIME))
     ) {
-      console.log("updating...");
       let count0 = myDeck.myCards.filter(myCard => myCard.level === 0).length;
       let count1 = myDeck.myCards.filter(myCard => myCard.level === 1).length;
       console.log(

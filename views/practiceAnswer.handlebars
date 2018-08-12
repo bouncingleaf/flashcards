@@ -1,0 +1,14 @@
+<div class="container">
+  <div class="row w-50 border border-dark p-3 m-3 mx-auto">
+    {{front}}
+  </div>
+  <div class="row w-50 border border-dark p-3 m-3 mx-auto">
+    {{back}}
+  </div>
+  <div class="row w-50 p-5 mx-auto">
+    <form method="POST">
+      <button type="submit" formaction="/practice/ask" id="w" value="wrong" class="btn btn-danger">Practice this more</button>
+      <button type="submit" formaction="/practice/ask" id="r" value="right" class="btn btn-success">I got it!</button>
+    </form>
+  </div>
+</div>
