@@ -8,14 +8,11 @@
 const DB = require("./dbConnection.js");
 const models = DB.getModels();
 const moment = require("moment");
-let cardsToPractice;
-let currentCard;
-let pageTitle;
-let userId;
+let cardsToPractice, currentCard, pageTitle, userId, deckId;
 
 module.exports.start = (req, res, next) => {
   userId = req.body.userId;
-  const deckId = req.body.deckId;
+  deckId = req.body.deckId;
 
   models.user.findById(userId, (err, user) => {
     if (err) error("could not find user " + userId, err);
@@ -27,10 +24,10 @@ module.exports.start = (req, res, next) => {
       );
       updateDeck(myDeck, user);
       levels = getLevelsToPractice(myDeck.day);
-      const cardsToStudy = myDeck.myCards
-        .filter(card => levels.includes(card.level))
-        .map(card => card.card);
-      models.card.find({ _id: { $in: cardsToStudy } }, (err, cards) => {
+      const cardsAtRightLevels = myDeck.myCards
+        .filter(myCard => levels.includes(myCard.level))
+        .map(myCard => myCard.card);
+      models.card.find({ _id: { $in: cardsAtRightLevels } }, (err, cards) => {
         if (err) error("unable to get cards to study", err);
         if (!cards) res.render("404");
         cardsToPractice = cards.map(card => {
@@ -60,7 +57,6 @@ module.exports.start = (req, res, next) => {
 
 // They want to see the answer
 module.exports.answer = (req, res, next) => {
-  console.log(`you clicked answer`);
   res.render("practiceAnswer", {
     title: "Practicing " + pageTitle,
     front: currentCard.front,
@@ -70,8 +66,7 @@ module.exports.answer = (req, res, next) => {
 
 // They saw the answer, for better or worse, ask again
 module.exports.ask = (req, res, next) => {
-  console.log("you clicked ask", req.params, currentCard);
-  if (cardsToPractice.length > 0) {
+   if (cardsToPractice.length > 0) {
     currentCard = cardsToPractice.pop();
     res.render("practiceAsk", {
       title: "Practicing " + pageTitle,
@@ -81,6 +76,32 @@ module.exports.ask = (req, res, next) => {
     res.render("practiceDone", {
       title: "You're done practicing " + pageTitle,
       userId: userId
+    });
+  }
+};
+
+// They saw the answer, for better or worse, ask again
+module.exports.recordAnswer = (req, res, next) => {
+  if (currentCard.level !== 1 && req.params.response) {
+    models.user.findById(userId, (err, user) => {
+      if (err) error("could not find user " + userId, err);
+      else if (!user) res.render("404");
+      else {
+        // Find the deck I want
+        let myDeck = user.userDecks.find(userDeck =>
+          userDeck.deck.equals(deckId)
+        );
+        cardInPlay = myDeck.myCards.find(myCard =>
+          myCard.card.equals(currentCard.id)
+        );
+        
+        if (req.params.response === "no") cardInPlay.level--;
+        if (req.params.response === "yes") cardInPlay.level++;
+        user.save(err => {
+          if (err) error("could not save user " + userId, err);
+        });
+        res.redirect("/practice/ask");
+      }
     });
   }
 };
@@ -158,8 +179,9 @@ getLevelsToPractice = day => {
   // Special odd cases: day 59 and %16 = 13
   if (dayOf64 === 59) return [6, 2, 1];
   if (dayOf16 === 13) return [4, 2, 1];
-  // All other odd # days
+  // All other odd # days:
   if (day % 2 === 1) return [2, 1];
+  // Most even # days follow a regular-ish pattern:
   switch (dayOf16) {
     case 2:
       return [3, 1];
@@ -174,9 +196,8 @@ getLevelsToPractice = day => {
     case 14:
       return [3, 1];
   }
+  // A few exceptions
   switch (dayOf64) {
-    case 16:
-      return [2, 1];
     case 24:
       return [6, 1];
     case 56:

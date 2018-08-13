@@ -4,56 +4,118 @@
 
 This is Jessica Roy's Final Project for Boston University MET CS 602 online, Professor Suresh Kalathur, summer term 2. 
 
+There are two pieces: 
+
+* flashcards - An app for practicing with flash cards.
+* flashcards-admin - An app for manipulating users and decks of flash cards
+
+They operate off the same database on heroku.
+
 ## Requirements
 
-You will need NodeJS. 
+You will need NodeJS. You will need internet access.
 
-To run this **locally** (preferred), you will also need a local MongoDB installation set up according to the instructions in the MongoDB_Setup.pdf file provided by the professor.
+The *flashcards* app can be run locally or remotely.
 
-To run this **remotely**, you can edit the credentials.js file to comment out the host and port, and uncomment the host and port for the remote system. This program has not been tested on the remote system, however.
+The *flashcards-admin* app can only be run locally. This is an oversimplified attempt to prevent completely arbitrary writes to the database.
 
 ## Setup
 
-1. From the top level folder (the folder containing package.json), run:
+### To prepare the app to run:
 
-    `npm install`
+* From both top level folders (the folders containing package.json), run: `npm install`
 
-2. If running locally, start your MongoDB server according to the instructions in the MongoDB_Setup.pdf file provided by the professor.
+### To launch the flashcards app locally
 
-## Running
+* From the flashcards folder, run: `node ./app.js`
 
-1. To start the web server, run this from the top level folder:
+* Then visit http://localhost:5000/
 
-    `node ./index.js`
-    
+### To launch the flashcards app remotely
 
-2. If you are running locally, you can access the web server at:
+* Visit https://stark-wildwood-97446.herokuapp.com/home/
 
-    <http://localhost:3000>
+### To launch the flashcards-admin app locally
 
-## How card review
+* From the flashcards folder, run: `node ./app.js`
 
-Each level represents how often we will review the cards:
-* not yet seen (not reviewed until they go up a level)
-* daily review
-* every other day
-* every 4 days
-* every 8 days
-* every 16 days
-* every 32 days
-* every 64 days
-* retired (not reviewed anymore, the user has learned it)
+* Then visit http://localhost:5001/
 
-Every time we load the user, we:
+## Using the admin app
+
+### Users
+
+The flashcards-admin application loads the users page as the home page (or, you can select Manage Users from the navigation bar at the top). 
+
+On the users screen, you can:
+
+* **Add a user** by typing in a value at the User Name field and chooosing Save.
+* **Manage an existing user** by selecting Manage User to the right of the user's name.
+
+### Manage User
+
+On the screen to manage a single user, you will be presented with a list of decks available to the user. Each deck will have a Review Day listed and a Status. Click on the Status to toggle between Active and Inactive.
+
+### Decks
+
+Choose Manage Decks from the navigation bar at the top, and you will be brought into the deck management screen.
+
+On the deck screen, you can:
+
+* **Add a deck** by typing in a value at the Deck Name field and chooosing Save.
+* **Manage an existing deck** by selecting Manage Deck to the right of the deck's name.
+
+### Manage Deck
+
+On the screen to manage a single deck, you can add a new card to the deck by specifying the Card Front and Card Back and choosing Save. You will also be presented with a list of cards in the deck. Each card will have a Card Front and Card Back. 
+
+## Using the flashcards app
+
+On the home screen, enter your username to sign in. No, this isn't in any way secure because authentication and authorization were not implemented as part of this project. However, the most someone can do is review your flash cards or toggle whether your decks are active or not.
+
+### Decks
+
+On the screen to manage a decks, you will be presented with a list of decks available to your user. Each deck will have a Review Day listed, a Status, and an option to Practice. You can:
+
+* Click on the Status to toggle between Active and Inactive.
+* Click on the Practice button to practice the deck. This works for active decks only.
+
+
+## How card review works
+
+This program uses a review schedule based on one from a book by Gabriel Wyner called _Fluent Forever: How to Learn Any Language Fast and Never Forget It_ (2014, Harmony Books, Crown Publishing Group, Random House LLC, New York, p. 274 of the Kindle edition). 
+
+For each user, all the cards in a deck are ranked as level 0 through level 8. The levels represent the frequency of review in a 64 day cycle:
+
+* Level 0 cards are pending cards, waiting to be pulled into the deck. They are not reviewed.
+* Level 1 cards are reviewed daily.
+* Level 2 cards are reviewed approximately every other day.
+* Level 3 cards are reviewed approximately every four days (16 times in the 64 day cycle).
+* Level 4 cards are reviewed eight times in the 64 day cycle.
+* Level 5 cards are reviewed four times in the 64 day cycle.
+* Level 6 cards are reviewed twice in 64 days.
+* Level 7 cards are reviewed once in 64 days.
+* Level 8 cards are "retired" and will not be reviewed. At this point, the user is considered to have learned these cards.
+
+You can download a copy of the cycle here: https://fluent-forever.com/appendix3/
+
+Every time we load the user, the program will:
+
 1. Pull any new card IDs from the main deck into the user deck. 
-2. Add those new cards as "unseen" (there may already be cards there).
+2. Add those new cards as level 0 cards (there may already be cards there).
 
-Each day we:
-1. Move N (say, 20) cards from unseen into daily.
-2. Start prompting the user with the cards they are due to review that day. 
-3. If they get the card right, it goes up a level. If they don't, it goes down a level.
+Each day, the program will:
 
-## Notes
+1. Move up to N (say, 20) cards from level 0 into level 1. The number of new cards is limited to encourage the user to begin to master the cards at hand at least a little prior to adding new cards into the mix.
+2. Start prompting the user with the cards they are due to review that day. So, if it is day 18 in the 64-day cycle, the user will review level 3 cards and level 1 cards.
+3. If they get the card right (by the user's own assessment), the card goes up a level and will be reviewed less frequently. If they don't, it goes down a level (or stays at level 1) and will be reviewed more frequently.
+
+## Known bugs and future work
+
+If I had more time, I would address the following:
+
+* Provide a real authentication and authorization scheme.
+* Remove the Practice option for inactive decks.
 
 ### Deprecation warning
 If at any point in this process, you encounter an error stating "DeprecationWarning: current URL string parser is deprecated, and will be removed in a future version," you can disregard this error, per Professor Kalathur.
