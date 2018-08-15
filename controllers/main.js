@@ -10,7 +10,3 @@
 module.exports.home = (req, res, next) => {
   res.render('home', { title: 'Home' });
 };
-
-module.exports.privacy = (req, res, next) => {
-  res.render('privacy', { title: 'Privacy' });
-};

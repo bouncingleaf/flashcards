@@ -1,5 +1,7 @@
 /**
- * The dbConnection file
+ * The dbConnection file - this should be identical between the flashcards 
+ * app and the flashcards-admin app. If these were the same app, they'd be
+ * shared. For now, it's a copy.
  * @author Jessica Roy
  */
 
@@ -16,7 +18,6 @@ const Schema = mongoose.Schema;
 mongoose.Promise = global.Promise;
 
 const CardSchema = new Schema({
-  // TODO: cardFront and cardBack should accept non-strings
   deck: Schema.Types.ObjectId, // Deck the card beongs to
   front: String, // "gato"
   back: String // "cat"
@@ -45,6 +46,7 @@ const UserSchema = new Schema({
   userDecks: [UserDeckSchema] // Embedded subdocument
 });
 
+// Share the data models
 module.exports.getModels = () => {
   if (connection == null) {
     connection = mongoose.createConnection(dbUrl, { useNewUrlParser: true });

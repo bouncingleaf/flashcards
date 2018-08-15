@@ -18,7 +18,6 @@ router.get('/', (req, res, next) => {
 
 // User routes
 router.get('/home', main.home);
-router.get('/privacy', main.privacy);
 router.get('/practice', main.home);
 router.post('/practice/answer', practice.answer);
 router.get('/practice/ask', practice.ask);

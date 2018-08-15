@@ -10,23 +10,32 @@ const models = DB.getModels();
 const moment = require("moment");
 let cardsToPractice, currentCard, pageTitle, userId, deckId;
 
+/**
+ * Kick off a practice session of the specified deck for the 
+ * specified user.
+ */
 module.exports.start = (req, res, next) => {
   userId = req.body.userId;
   deckId = req.body.deckId;
 
+  // Look up the user
   models.user.findById(userId, (err, user) => {
     if (err) error("could not find user " + userId, err);
     else if (!user) res.render("404");
     else {
-      // Find the deck I want
+      // Find the deck the user wants
       let myDeck = user.userDecks.find(userDeck =>
         userDeck.deck.equals(deckId)
       );
+      // Update the deck (get it ready for quizzing)
       updateDeck(myDeck, user);
+      // Figure out what levels the user should practice today
       levels = getLevelsToPractice(myDeck.day);
+      // Get the cards for those levels
       const cardsAtRightLevels = myDeck.myCards
         .filter(myCard => levels.includes(myCard.level))
         .map(myCard => myCard.card);
+      // Find the actual content for those cards
       models.card.find({ _id: { $in: cardsAtRightLevels } }, (err, cards) => {
         if (err) error("unable to get cards to study", err);
         if (!cards) res.render("404");
@@ -37,7 +46,9 @@ module.exports.start = (req, res, next) => {
             id: card._id
           };
         });
+        // Set the page title
         pageTitle = `${myDeck.name} (day ${myDeck.day})`;
+        // If there are any cards to practice, start practicing
         if (cardsToPractice.length > 0) {
           currentCard = cardsToPractice.pop();
           res.render("practiceAsk", {
@@ -45,6 +56,9 @@ module.exports.start = (req, res, next) => {
             card: currentCard.front
           });
         } else {
+          // If the user is done for the day, that's it
+          // Note: In the updateDeck function, you can set the length of a 
+          // "day" to be whatever you want. :) Useful for testing!
           res.render("practiceDone", {
             title: "You're done practicing " + pageTitle,
             userId: userId
@@ -55,7 +69,11 @@ module.exports.start = (req, res, next) => {
   });
 };
 
-// They want to see the answer
+/**
+ * The user would like to see the answer, so show both the front
+ * and the back of the card. This page also asks them if they need
+ * to practie it more or if they got it right.
+ */
 module.exports.answer = (req, res, next) => {
   res.render("practiceAnswer", {
     title: "Practicing " + pageTitle,
@@ -64,7 +82,10 @@ module.exports.answer = (req, res, next) => {
   });
 };
 
-// They saw the answer, for better or worse, ask again
+/**
+ * Practice is underway! If there are any cards left for today, give the user
+ * the next card to review. If there are no cards left, the user is done.
+ */
 module.exports.ask = (req, res, next) => {
    if (cardsToPractice.length > 0) {
     currentCard = cardsToPractice.pop();
@@ -80,9 +101,14 @@ module.exports.ask = (req, res, next) => {
   }
 };
 
-// They saw the answer, for better or worse, ask again
+/**
+ * Handle the user's response about whether they want to practice this card
+ * more or if they've got it right.
+ * 
+ */
 module.exports.recordAnswer = (req, res, next) => {
-  if (currentCard.level !== 1 && req.params.response) {
+  // 
+  if (req.params.response) {
     models.user.findById(userId, (err, user) => {
       if (err) error("could not find user " + userId, err);
       else if (!user) res.render("404");
@@ -91,21 +117,32 @@ module.exports.recordAnswer = (req, res, next) => {
         let myDeck = user.userDecks.find(userDeck =>
           userDeck.deck.equals(deckId)
         );
+        // Find the card in the deck
         cardInPlay = myDeck.myCards.find(myCard =>
           myCard.card.equals(currentCard.id)
         );
-        
-        if (req.params.response === "no") cardInPlay.level--;
+        // If the user got it wrong, demote it (but not if it's already level 1)
+        if (req.params.response === "no" && cardInPlay.level > 1) cardInPlay.level--;
+        // If the user got it right, promite it
         if (req.params.response === "yes") cardInPlay.level++;
+        // Save
         user.save(err => {
           if (err) error("could not save user " + userId, err);
         });
+        // Answer recorded! Go display the next card, if there is one.
         res.redirect("/practice/ask");
       }
     });
   }
 };
 
+/**
+ * Updates the deck for the specified user. Specifically:
+ * 1. Gets any recently added cards and stores them at level 0
+ * 2. Promotes new cards to level 0, unless the user is maxed out
+ * 3. Adds 1 to the day counter for the deck (See README.md)
+ * 4. Updates the last practiced date/time
+ */
 function updateDeck(myDeck, user) {
   const deckId = myDeck.deck;
 
@@ -121,6 +158,7 @@ function updateDeck(myDeck, user) {
     if (err) error("could not set up deck " + deckId, err);
     if (!cards) console.log("No cards found in deck " + deckId);
     else {
+      // Figure out what cards we already have
       const existing = myDeck.myCards.map(card => card.card._id.toString());
 
       // Store incoming cardIDs at level 0
@@ -161,19 +199,26 @@ function updateDeck(myDeck, user) {
       // myDeck.day++;
       // myDeck.lastPracticedOn = moment();
     }
+    // Save
     user.save(err => {
       if (err) error("could not save user " + userId, err);
     });
   });
 }
 
+/**
+ * Based on the day the user is on (in a 64-day cycle), 
+ * determine which cards the user should review.
+ * 
+ * This chart is based on one from a book by Gabriel Wyner:
+ * 
+ * Wyner, G. (2014) _Fluent forever: How to learn any language fast and
+ * never forget it_. Harmony Books (Crown Publishing Group, Random House
+ * LLC), New York, p. 274 of the Kindle edition.
+ * 
+ * More information in README.md
+ */
 getLevelsToPractice = day => {
-  // This chart is based on one from a book by Gabriel Wyner:
-  //
-  // Wyner, G. (2014) _Fluent forever: How to learn any language fast and
-  // never forget it_. Harmony Books (Crown Publishing Group, Random House
-  // LLC), New York, p. 274 of the Kindle edition.
-  //
   const dayOf64 = day % 64;
   const dayOf16 = day % 16;
   // Special odd cases: day 59 and %16 = 13

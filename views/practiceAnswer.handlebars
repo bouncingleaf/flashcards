@@ -1,4 +1,5 @@
 <div class="container">
+  {{!-- Display both sides of the card --}}
   <div class="row w-50 border border-dark p-3 m-3 mx-auto">
     {{front}}
   </div>
@@ -7,9 +8,9 @@
   </div>
   <div class="row w-50 p-5 mx-auto">
     <form method="POST">
-
-      <button type="submit" formaction="/practice/no" id="w" class="btn btn-danger">Practice this more</button>
-      <button type="submit" formaction="/practice/yes" id="r" class="btn btn-success">I got it!</button>
+      {{!-- Prompt the user: did they get it right? --}}
+      <button type="submit" formaction="/practice/no" class="btn btn-danger">Practice this more</button>
+      <button type="submit" formaction="/practice/yes" class="btn btn-success">I got it!</button>
     </form>
   </div>
 </div>
