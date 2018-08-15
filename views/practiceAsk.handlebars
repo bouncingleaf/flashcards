@@ -6,7 +6,6 @@
   <div class="row w-50 p-5 mx-auto">
     {{!-- "Flip" the card to see the answer... --}}
     <form method="POST" action="/practice/answer">
-      <input type="hidden" name="_csrf" value="{{_csrfToken}}">
       <input type="submit" value="Check Answer" class="btn btn-primary">
     </form>
   </div>

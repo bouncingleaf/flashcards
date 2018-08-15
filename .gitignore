@@ -1,3 +1,11 @@
+#blocking the code from going to the server for now
+adminCards.handlebars
+adminDecks.handlebars
+adminUser.handlebars
+adminUsers.handlebars
+adminHome.handlebars
+adminMain.handlebars
+
 # Node build artifacts
 node_modules
 npm-debug.log

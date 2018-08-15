@@ -144,5 +144,8 @@ With more time, I could address the following:
 * Offer a "use reverse also?" checkbox when entering cards - duplicates the card but with front/back swapped
 * Provide a real authentication and authorization scheme.
 
+      <input type="hidden" name="_csrf" value="{{_csrfToken}}">
+
+
 ### Deprecation warning
 If at any point in this process, you encounter an error stating "DeprecationWarning: current URL string parser is deprecated, and will be removed in a future version," you can disregard this error, per Professor Kalathur.

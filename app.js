@@ -11,11 +11,10 @@ const handlebars = require('express-handlebars');
 const bodyParser = require('body-parser');
 const PORT = process.env.PORT || 5000;
 const routes = require('./routes/index');
-const session = require('express-session');
+// const session = require('express-session');
 
 const app = express();
 
-  
 // Set up handlebars
 app.engine('handlebars', handlebars({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
@@ -27,12 +26,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-// Set up csurf according to instructions in Express textbook
-app.use(require('csurf')());
-app.use(function(req, res, next){
-  res.locals._csrfToken = req.csrfToken();
-  next(); 
-});
+// // Set up csurf according to instructions in Express textbook
+// app.use(require('csurf')());
+// app.use(function(req, res, next){
+//   res.locals._csrfToken = req.csrfToken();
+//   next(); 
+// });
 
 // Routes
 app.use('/', routes);
