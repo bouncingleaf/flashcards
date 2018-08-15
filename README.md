@@ -114,6 +114,17 @@ Each day, the program will:
 2. Start prompting the user with the cards they are due to review that day. So, if it is day 18 in the 64-day cycle, the user will review level 3 cards and level 1 cards.
 3. If they get the card right (by the user's own assessment), the card goes up a level and will be reviewed less frequently. If they don't, it goes down a level (or stays at level 1) and will be reviewed more frequently.
 
+## Packages used in this project include:
+* ajv - required peer dependency 
+* body-parser - for parsing forms
+* csurf - CSRF protection
+* dotenv - for use of the .env file, which holds environment variables such as database credentials
+* express - nodjs webapplication framework
+* express-handlebars - templating engine
+* express-session - needed to support csurf
+* moment - parsing dates and times
+* mongoose - mongoDB
+
 ## Known bugs and future work
 
 Bugs:

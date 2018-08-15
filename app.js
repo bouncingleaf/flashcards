@@ -10,7 +10,8 @@ const path = require('path');
 const handlebars = require('express-handlebars');
 const bodyParser = require('body-parser');
 const PORT = process.env.PORT || 5000;
-var routes = require('./routes/index');
+const routes = require('./routes/index');
+const session = require('express-session');
 
 const app = express();
 
@@ -25,6 +26,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Set up bodyParser to handle forms
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+
+// Set up csurf according to instructions in Express textbook
+app.use(require('csurf')());
+app.use(function(req, res, next){
+  res.locals._csrfToken = req.csrfToken();
+  next(); 
+});
 
 // Routes
 app.use('/', routes);
