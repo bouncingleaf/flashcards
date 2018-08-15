@@ -11,7 +11,6 @@ const handlebars = require('express-handlebars');
 const bodyParser = require('body-parser');
 const PORT = process.env.PORT || 5000;
 const routes = require('./routes/index');
-// const session = require('express-session');
 
 const app = express();
 
@@ -26,15 +25,28 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-// // Set up csurf according to instructions in Express textbook
-// app.use(require('csurf')());
-// app.use(function(req, res, next){
-//   res.locals._csrfToken = req.csrfToken();
-//   next(); 
-// });
+// Used for CSRF protection by csurf
+app.use(require('cookie-parser')(process.env.COOKIE_SECRET));
+
+// Set up csurf according to instructions in Express textbook
+app.use(require('csurf')({
+  cookie: true
+}));
+app.use(function(req, res, next){
+  res.locals._csrfToken = req.csrfToken();
+  next(); 
+});
 
 // Routes
 app.use('/', routes);
+
+// Error handler
+app.use((err, req, res, next) => {
+  if (err.code !== 'EBADCSRFTOKEN') return next(err);
+  // Handle CSRF errors:
+  res.status(403);
+  res.render('403');
+});
 
 // Set a 404 page
 app.use((req, res) => {

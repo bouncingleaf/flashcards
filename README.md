@@ -1,45 +1,46 @@
 # Jessica Roy's Final Project for MET CS 602
 
+## NEW!
+
+New since this was presented on August 14:
+
+* It is now one app instead of two!
+    * I used .gitignore to keep the admin code off the heroku site.
+    * I set up an environment variable to drive whether or admin routes are set up. If you visit /adminHome, for example, on the heroku site, you will get a 404.
+    * This made the code a **lot** simpler and allowed me to reuse code instead of duplicating it (e.g. dbConnection.js)
+* I've implemented Cross-Site Request Forgery protection using a package called csurf.
+* The Heroku URL is cooler: https://cs602-flashcards.herokuapp.com/home
+
+
 ## About
 
 This is Jessica Roy's Final Project for Boston University MET CS 602 online, Professor Suresh Kalathur, summer term 2. 
 
-There are two pieces: 
+The flashcards app is to help practice with flash cards using a "spaced repetition" system described by Gabriel Wyner in his book _Fluent Forever_. (See more information about this system below.)
 
-* flashcards - An app for practicing with flash cards.
-* flashcards-admin - An app for manipulating users and decks of flash cards
+There are two parts to the app: 
+1. A user interface - users can select a deck to practice with. This is accessible locally or on heroku.
+2. An admin interface - admins can enter new users, enter new decks, and enter cards into the decks. The admin interface can only be accessed locally. 
 
-They operate off the same database on heroku.
-
-## Requirements
-
-You will need NodeJS. You will need internet access.
-
-The *flashcards* app can be run locally or remotely.
-
-The *flashcards-admin* app can only be run locally. This is an oversimplified attempt to prevent completely arbitrary writes to the database.
+You will need NodeJS. You will need internet access so the app can talk to the database, which is hosted on mlab.com.
 
 ## Setup
 
 ### To prepare the app to run:
 
-* From both top level folders (the folders containing package.json), run: `npm install`
+* From the flashcards folder (the folder containing package.json), run: `npm install`
 
 ### To launch the flashcards app locally
 
 * From the flashcards folder, run: `node ./app.js`
 
-* Then visit http://localhost:5000/
+* To access the user interface, visit http://localhost:5000/
+
+* To access the admin interface, visit http://localhost:5000/adminHome
 
 ### To launch the flashcards app remotely
 
-* Visit https://stark-wildwood-97446.herokuapp.com/home/
-
-### To launch the flashcards-admin app locally
-
-* From the flashcards folder, run: `node ./app.js`
-
-* Then visit http://localhost:5001/
+* Visit https://cs602-flashcards.herokuapp.com/home
 
 ## Using the admin app
 
@@ -82,8 +83,20 @@ On the screen to manage a decks, you will be presented with a list of decks avai
 
 ## Accessing the JSON and XML APIs
 
-You can set Accept 
-Example: localhost:5000/user/5b70a501dce1c52af0f06565
+You can access the user API given a specific user IDL
+
+GET localhost:5000/user/USER_ID
+
+Find your favorite user's user ID by looking at their user page in a browser).
+
+You can set a header of either:
+
+* Accept: application/json
+* Accept: application/xml
+
+Example:
+
+    GET localhost:5000/user/5b70a501dce1c52af0f06565
 
 ## How card review works
 
@@ -110,18 +123,18 @@ Every time we load the user, the program will:
 
 Each day, the program will:
 
-1. Move up to N (say, 20) cards from level 0 into level 1. The number of new cards is limited to encourage the user to begin to master the cards at hand at least a little prior to adding new cards into the mix.
+1. Promote up to N (say, 20) cards from level 0 into level 1. The number of new cards is limited to encourage the user to begin to master the cards at hand at least a little prior to adding new cards into the mix.
 2. Start prompting the user with the cards they are due to review that day. So, if it is day 18 in the 64-day cycle, the user will review level 3 cards and level 1 cards.
 3. If they get the card right (by the user's own assessment), the card goes up a level and will be reviewed less frequently. If they don't, it goes down a level (or stays at level 1) and will be reviewed more frequently.
 
-## Packages used in this project include:
+## Packages used in this project
+
 * ajv - required peer dependency 
 * body-parser - for parsing forms
 * csurf - CSRF protection
-* dotenv - for use of the .env file, which holds environment variables such as database credentials
+* dotenv - for the .env file, to hold environment variables such as database credentials
 * express - nodjs webapplication framework
 * express-handlebars - templating engine
-* express-session - needed to support csurf
 * moment - parsing dates and times
 * mongoose - mongoDB
 
@@ -132,6 +145,7 @@ Bugs:
 * Sometimes the user needs to inactivate and reactivate a newly activated deck to get it to work.
 * Clicking Practice for an inactive deck does not work. The option should be removed.
 * There's nothing preventing duplicate users, decks, or cards.
+* Retrieving the user does update the decks for the user - which means the GET is not strictly without side effects. This should be broken out into two separate processes so that the user can be retrieved without any side effects.
 
 With more time, I could address the following:
 
@@ -143,9 +157,3 @@ With more time, I could address the following:
 * Allow non-text for the front or back of cards: images, sound files, etc.
 * Offer a "use reverse also?" checkbox when entering cards - duplicates the card but with front/back swapped
 * Provide a real authentication and authorization scheme.
-
-      <input type="hidden" name="_csrf" value="{{_csrfToken}}">
-
-
-### Deprecation warning
-If at any point in this process, you encounter an error stating "DeprecationWarning: current URL string parser is deprecated, and will be removed in a future version," you can disregard this error, per Professor Kalathur.
