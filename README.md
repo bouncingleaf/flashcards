@@ -80,6 +80,10 @@ On the screen to manage a decks, you will be presented with a list of decks avai
 * Click on the Status to toggle between Active and Inactive.
 * Click on the Practice button to practice the deck. This works for active decks only.
 
+## Accessing the JSON and XML APIs
+
+You can set Accept 
+Example: localhost:5000/user/5b70a501dce1c52af0f06565
 
 ## How card review works
 
@@ -112,10 +116,22 @@ Each day, the program will:
 
 ## Known bugs and future work
 
-If I had more time, I would address the following:
+Bugs:
 
+* Sometimes the user needs to inactivate and reactivate a newly activated deck to get it to work.
+* Clicking Practice for an inactive deck does not work. The option should be removed.
+* There's nothing preventing duplicate users, decks, or cards.
+
+With more time, I could address the following:
+
+* **Get the day count functionality to work**
+* **Allow the admin to edit a card**
+* **Allow the admin to delete cards from a deck**
+* Allow the admin to inactivate or delete users
+* Give the user a progress report
+* Allow non-text for the front or back of cards: images, sound files, etc.
+* Offer a "use reverse also?" checkbox when entering cards - duplicates the card but with front/back swapped
 * Provide a real authentication and authorization scheme.
-* Remove the Practice option for inactive decks.
 
 ### Deprecation warning
 If at any point in this process, you encounter an error stating "DeprecationWarning: current URL string parser is deprecated, and will be removed in a future version," you can disregard this error, per Professor Kalathur.
