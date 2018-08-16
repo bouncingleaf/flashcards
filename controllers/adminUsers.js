@@ -8,6 +8,12 @@
 const DB = require("./dbConnection.js");
 const models = DB.getModels();
 
+// See https://www.npmjs.com/package/dompurify
+const createDOMPurify = require('dompurify');
+const { JSDOM } = require('jsdom');
+const window = (new JSDOM('')).window;
+const DOMPurify = createDOMPurify(window);
+
 /**
  * This is the admin page for users - one can add new users here,
  * or link to managing an individual user.
@@ -36,7 +42,7 @@ module.exports.users = (req, res, next) => {
  * It also checks for any newly created decks.
  */
 module.exports.adminUser = (req, res, next) => {
-  let userId = req.params.userId;
+  let userId = DOMPurify.sanitize(req.params.userId);
   // Get the user
   models.user.findById(userId, (err, user) => {
     if (err) error("could not select user " + userId, err);
@@ -78,13 +84,13 @@ module.exports.saveNewUser = (req, res, next) => {
     if (err || !allDecks) error("no decks defined", err);
     else {
       let user = new models.user({
-        name: req.body.name,
+        name: DOMPurify.sanitize(req.body.name),
         userDecks: allDecks.map(deck => newUserDeck(deck))
       });
 
       user.save(err => {
         if (err) error("could not save user " + userId, err);
-        res.redirect("/adminUsers");
+        res.redirect(303, "/adminUsers");
       });
     }
   });
@@ -97,12 +103,12 @@ module.exports.saveNewUser = (req, res, next) => {
  * way, only when the user subscribes do we get all the cards.
  */
 module.exports.toggleUserDeck = (req, res, next) => {
-  let userId = req.body.userId;
+  let userId = DOMPurify.sanitize(req.body.userId);
   // Find the user by ID
   models.user.findById(userId, (err, user) => {
     if (err || !user) error("could not find user " + userId, err);
     else {
-      let deckId = req.body.deckId;
+      let deckId = DOMPurify.sanitize(req.body.deckId);
       // Find the deck to toggle in the user decks
       let userDeckMatch = user.userDecks.find(userDeck =>
         userDeck.deck.equals(deckId)
@@ -131,14 +137,14 @@ module.exports.toggleUserDeck = (req, res, next) => {
               // Save the user with this updated set of userDecks
               user.save(err => {
                 if (err) error("could not save user " + userId, err);
-                res.redirect("/adminUser/" + userId);
+                res.redirect(303, "/adminUser/" + userId);
               });
             }
           });
         } else {
           user.save(err => {
             if (err) error("could not save user " + userId, err);
-            res.redirect("/adminUser/" + userId);
+            res.redirect(303, "/adminUser/" + userId);
           });
         }
       }
@@ -152,14 +158,14 @@ module.exports.toggleUserDeck = (req, res, next) => {
  * This could someday be replaced by real authentication.
  */
 module.exports.signIn = (req, res, next) => {
-  let userName = req.body.name;
+  let userName = DOMPurify.sanitize(req.body.name);
 
   models.user.findOne({ name: userName }, (err, user) => {
     if (err || !user) {
       error("could not find user " + userName, err);
-      res.redirect("/adminHome");
+      res.redirect(303, "/adminHome");
     } else {
-      res.redirect("/adminUser/" + user._id);
+      res.redirect(303, "/adminUser/" + user._id);
     }
   });
 };

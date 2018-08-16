@@ -1,11 +1,13 @@
 <div class="container">
   {{!-- Decks for a given user - the user's "home page" --}}
   <div class="row">
-    <table class="table table-bordered">
+    <table class="table table-bordered table-striped table-sm">
       <thead>
         <tr>
           <th>Deck Name</th>
           <th>Review Day</th>
+          <th>Total Cards</th>
+          <th>Cards at Each Level</th>
           <th>Status</th>
           <th></th>
         </tr>
@@ -13,21 +15,29 @@
       <tbody>
         {{#each data}}
         <tr>
-          <td>{{this.name}}</td>
-          <td>{{this.day}}</td>
-          <td>
+          <td class="align-middle">{{this.name}}</td>
+          <td class="align-middle">{{this.day}}</td>
+          <td class="align-middle">{{this.stats.total}}</td>
+          <td class="align-middle">{{this.stats.report}}</td>
+          <td class="align-middle">
             <form method="POST" action="/toggleUserDeck">
               <input type="hidden" value="{{../userId}}" name="userId">
               <input type="hidden" value="{{this.id}}" name="deckId">
+              {{!-- Comment this csrf line out & file a card to see the CSRF protection in action --}}
+              <input type="hidden" name="_csrf" value="{{_csrfToken}}">
               <input type="submit" value="{{this.status}}" class="btn btn-link">
             </form>
           </td>
-          <td>
+          <td class="align-middle">
+            <div style="visibility:{{this.visibility}};">
             <form method="POST" action="/practice">
               <input type="hidden" value="{{../userId}}" name="userId">
               <input type="hidden" value="{{this.id}}" name="deckId">
-              <input type="submit" value="Practice" class="btn btn-primary"> (active decks only)
+              {{!-- Comment this csrf line out & file a card to see the CSRF protection in action --}}
+              <input type="hidden" name="_csrf" value="{{_csrfToken}}">
+              <input type="submit" value="Practice" class="btn btn-primary btn-sm">
             </form>
+            </div>
           </td>
         </tr>
         {{/each}}

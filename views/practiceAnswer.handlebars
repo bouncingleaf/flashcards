@@ -8,6 +8,8 @@
   </div>
   <div class="row w-50 p-5 mx-auto">
     <form method="POST">
+      {{!-- Comment this csrf line out & file a card to see the CSRF protection in action --}}
+      <input type="hidden" name="_csrf" value="{{_csrfToken}}">
       {{!-- Prompt the user: did they get it right? --}}
       <button type="submit" formaction="/practice/no" class="btn btn-danger">Practice this more</button>
       <button type="submit" formaction="/practice/yes" class="btn btn-success">I got it!</button>

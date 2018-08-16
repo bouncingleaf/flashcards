@@ -1,0 +1,36 @@
+<div class="container">
+  {{!-- Edit a card --}}
+  <div class="row">
+    <h5>Edit or Delete a card</h5>
+  </div>
+  <div class="row">
+    <form method="POST" action="/saveCardEdit/{{deckId}}/{{cardId}}">
+      <div class="form-group">
+        <label for="front">Front:</label>
+        <input class="form-control" type="text" name="front" size="75" maxlength="80" value="{{front}}" required>
+        <br>
+        <label class="label" for="back">Back:</label>
+        <input class="form-control" type="text" name="back" size="75" maxlength="80" value="{{back}}" required>
+        <br> {{!-- Comment this csrf line out & file a card to see the CSRF protection in action --}}
+        <input type="hidden" name="_csrf" value="{{_csrfToken}}">
+        <input type="submit" value="Save" class="btn btn-primary">
+        <input type="button" value="Cancel" class="btn btn-secondary" onclick="cancelCardEdit()">
+      </div>
+    </form>
+    <br>
+  </div>
+
+  <div class="row">
+    {{!-- I tried for hours to get some sort of confirmation popup... I give up --}}
+    <p>Warning: Delete has no confirmation!</p>
+  </div>
+  <div class="row">
+    <form method="POST" action="/adminDeleteCard/{{deckId}}/{{cardId}}">
+      <div class="form-group">
+        <input type="hidden" name="_csrf" value="{{_csrfToken}}">
+        <input type="submit" value="Delete this card" class="btn btn-danger">
+      </div>
+    </form>
+  </div>
+
+</div>

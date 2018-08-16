@@ -8,6 +8,12 @@
 const DB = require("./dbConnection.js");
 const Deck = DB.getModels().deck;
 
+// See https://www.npmjs.com/package/dompurify
+const createDOMPurify = require('dompurify');
+const { JSDOM } = require('jsdom');
+const window = (new JSDOM('')).window;
+const DOMPurify = createDOMPurify(window);
+
 /**
  * A simple admin page for decks. One can view existing decks
  * and add a new deck... which is really just a name.
@@ -33,11 +39,11 @@ module.exports.decks = (req, res, next) => {
 // Saves a new deck.
 module.exports.saveDeck = (req, res, next) => {
   let item = new Deck({
-    name: req.body.name
+    name: DOMPurify.sanitize(req.body.name)
   });
   item.save(err => {
     if (err) error("unable to save deck ", err);
-    res.redirect("/adminDecks");
+    res.redirect(303, "/adminDecks");
   });
 };
 

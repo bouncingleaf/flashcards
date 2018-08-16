@@ -3,6 +3,6 @@
  * @author Jessica Roy
  */
 
-function add(){
-    window.location.href = '/add';
+function cancelCardEdit(){
+  window.location.href = '/adminCards';
 }

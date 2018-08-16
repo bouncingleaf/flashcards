@@ -8,13 +8,19 @@
 const DB = require("./dbConnection.js");
 const models = DB.getModels();
 
+// See https://www.npmjs.com/package/dompurify
+const createDOMPurify = require("dompurify");
+const { JSDOM } = require("jsdom");
+const window = new JSDOM("").window;
+const DOMPurify = createDOMPurify(window);
+
 /**
  * This is the user's "home page", a page for a single user.
  * It is VERY similar to the admin's "user page".
  * It also checks for any newly created decks.
  */
 module.exports.user = (req, res, next) => {
-  let userId = req.params.userId;
+  let userId = DOMPurify.sanitize(req.params.userId);
   // Get the user
   models.user.findById(userId, (err, user) => {
     if (err) error("could not select user " + userId, err);
@@ -33,10 +39,26 @@ module.exports.user = (req, res, next) => {
         });
       }
       results = user.userDecks.map(deck => {
+        let stats = { total: "", report: "" };
+        if (deck.active) {
+          stats.total = deck.myCards.length;
+          let levels = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+          deck.myCards.forEach(card => {
+            levels[card.level]++;
+          });
+          stats.report = "";
+          for (i = 0; i < levels.length - 1; i++) {
+            if (levels[i] !== 0) {
+              stats.report = `${stats.report} Level ${i}: ${levels[i]}; `;
+            }
+          }
+        }
         return {
           name: deck.name,
-          day: deck.day,
+          day: deck.active ? deck.day : "",
           id: deck.deck,
+          stats: stats,
+          visibility: deck.active ? "visible" : "hidden",
           status: deck.active ? "Active" : "Inactive"
         };
       });
@@ -45,19 +67,32 @@ module.exports.user = (req, res, next) => {
         "application/json": () => {
           res.json(results);
         },
-        'application/xml': () => {
+        "application/xml": () => {
           const resultsXml =
-          '<decks>\n' +
-          results.map(function (deck) {
-            return ' <deck id="' + deck.id + '">\n' +
-              '  <name>' + deck.name + '</name>\n' +
-              '  <day>' + deck.day + '</day>\n' +
-              '  <status>' + deck.status + '</status>\n' +
-              ' </deck>';
-          }).join('\n') + '\n</decks>\n';
-  
-        res.type('application/xml');
-        res.send('<?xml version="1.0"?>\n' + resultsXml);
+            "<decks>\n" +
+            results
+              .map(function(deck) {
+                return (
+                  ' <deck id="' +
+                  deck.id +
+                  '">\n' +
+                  "  <name>" +
+                  deck.name +
+                  "</name>\n" +
+                  "  <day>" +
+                  deck.day +
+                  "</day>\n" +
+                  "  <status>" +
+                  deck.status +
+                  "</status>\n" +
+                  " </deck>"
+                );
+              })
+              .join("\n") +
+            "\n</decks>\n";
+
+          res.type("application/xml");
+          res.send('<?xml version="1.0"?>\n' + resultsXml);
         },
         // Show the user page
         "text/html": () => {
@@ -79,12 +114,12 @@ module.exports.user = (req, res, next) => {
  * way, only when the user subscribes do we get all the cards.
  */
 module.exports.toggleUserDeck = (req, res, next) => {
-  let userId = req.body.userId;
+  let userId = DOMPurify.sanitize(req.body.userId);
   // Find the user by ID
   models.user.findById(userId, (err, user) => {
     if (err || !user) error("could not find user " + userId, err);
     else {
-      let deckId = req.body.deckId;
+      let deckId = DOMPurify.sanitize(req.body.deckId);
       // Find the deck to toggle in the user decks
       let userDeckMatch = user.userDecks.find(userDeck =>
         userDeck.deck.equals(deckId)
@@ -114,14 +149,14 @@ module.exports.toggleUserDeck = (req, res, next) => {
               // Save the user with this updated set of userDecks
               user.save(err => {
                 if (err) error("could not save user " + userId, err);
-                res.redirect("/user/" + userId);
+                res.redirect(303, "/user/" + userId);
               });
             }
           });
         } else {
           user.save(err => {
             if (err) error("could not save user " + userId, err);
-            res.redirect("/user/" + userId);
+            res.redirect(303, "/user/" + userId);
           });
         }
       }
@@ -135,13 +170,13 @@ module.exports.toggleUserDeck = (req, res, next) => {
  * This could someday be replaced by real authentication.
  */
 module.exports.signIn = (req, res, next) => {
-  let userName = req.body.name;
+  let userName = DOMPurify.sanitize(req.body.name);
   models.user.findOne({ name: userName }, (err, user) => {
     if (err || !user) {
       error("could not find user " + userName, err);
-      res.redirect("/home");
+      res.redirect(303, "/home");
     } else {
-      res.redirect("/user/" + user._id);
+      res.redirect(303, "/user/" + user._id);
     }
   });
 };

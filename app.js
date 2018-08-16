@@ -29,13 +29,13 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(require('cookie-parser')(process.env.COOKIE_SECRET));
 
 // Set up csurf according to instructions in Express textbook
-app.use(require('csurf')({
-  cookie: true
-}));
-app.use(function(req, res, next){
-  res.locals._csrfToken = req.csrfToken();
-  next(); 
-});
+// app.use(require('csurf')({
+//   cookie: true
+// }));
+// app.use(function(req, res, next){
+//   res.locals._csrfToken = req.csrfToken();
+//   next(); 
+// });
 
 // Routes
 app.use('/', routes);

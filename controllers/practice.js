@@ -10,13 +10,19 @@ const models = DB.getModels();
 const moment = require("moment");
 let cardsToPractice, currentCard, pageTitle, userId, deckId;
 
+// See https://www.npmjs.com/package/dompurify
+const createDOMPurify = require('dompurify');
+const { JSDOM } = require('jsdom');
+const window = (new JSDOM('')).window;
+const DOMPurify = createDOMPurify(window);
+
 /**
  * Kick off a practice session of the specified deck for the 
  * specified user.
  */
 module.exports.start = (req, res, next) => {
-  userId = req.body.userId;
-  deckId = req.body.deckId;
+  userId = DOMPurify.sanitize(req.body.userId);
+  deckId = DOMPurify.sanitize(req.body.deckId);
 
   // Look up the user
   models.user.findById(userId, (err, user) => {
@@ -107,8 +113,9 @@ module.exports.ask = (req, res, next) => {
  * 
  */
 module.exports.recordAnswer = (req, res, next) => {
-  // 
-  if (req.params.response) {
+  //
+  const answer = DOMPurify.sanitize(req.params.response);
+  if (answer) {
     models.user.findById(userId, (err, user) => {
       if (err) error("could not find user " + userId, err);
       else if (!user) res.render("404");
@@ -122,15 +129,15 @@ module.exports.recordAnswer = (req, res, next) => {
           myCard.card.equals(currentCard.id)
         );
         // If the user got it wrong, demote it (but not if it's already level 1)
-        if (req.params.response === "no" && cardInPlay.level > 1) cardInPlay.level--;
+        if (answer === "no" && cardInPlay.level > 1) cardInPlay.level--;
         // If the user got it right, promite it
-        if (req.params.response === "yes") cardInPlay.level++;
+        if (answer === "yes") cardInPlay.level++;
         // Save
         user.save(err => {
           if (err) error("could not save user " + userId, err);
         });
         // Answer recorded! Go display the next card, if there is one.
-        res.redirect("/practice/ask");
+        res.redirect(303, "/practice/ask");
       }
     });
   }
@@ -172,10 +179,10 @@ function updateDeck(myDeck, user) {
       console.log(`Found ${count} new cards in deck ${myDeck.name}`);
     }
     // If now is at least WAIT_TIME since the deck was last practiced,
-    // then promote new cards to level 0 until we run out or reach limit
+    // then promote new cards to level 0 until we run out or reach limit    
     if (
       !myDeck.lastPracticedOn ||
-      moment().isAfter(myDeck.lastPracticedOn.add(WAIT_TIME))
+      moment().isAfter(moment(myDeck.lastPracticedOn).add(WAIT_TIME))
     ) {
       let count0 = myDeck.myCards.filter(myCard => myCard.level === 0).length;
       let count1 = myDeck.myCards.filter(myCard => myCard.level === 1).length;
@@ -196,7 +203,7 @@ function updateDeck(myDeck, user) {
         }
       }
       // Start the day counter, note last practiced date
-      // myDeck.day++;
+      myDeck.day++;
       // myDeck.lastPracticedOn = moment();
     }
     // Save

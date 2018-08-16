@@ -7,8 +7,9 @@
       {{!-- "Sign in" - really just entering a username --}}
       <div class="form-group">
         <label for="name">User Name:</label>
-        <input class="form-control" type="text" name="name" size="30" required>
+        <input class="form-control" type="text" name="name" size="30" autofocus required>
         <br>
+        <input type="hidden" name="_csrf" value="{{_csrfToken}}">
         <input type="submit" value="Go" class="btn btn-primary">
       </div>
     </form>

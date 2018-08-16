@@ -14,7 +14,7 @@ const ADMIN = process.env.FLASHCARDS_MODE === 'ADMIN';
 
 // router specs
 router.get("/", (req, res, next) => {
-  res.redirect("/home");
+  res.redirect(303, "/home");
 });
 
 // User routes
@@ -42,11 +42,14 @@ if (ADMIN) {
   router.get("/adminCards", adminDecks.decks);
   router.get("/adminDecks", adminDecks.decks);
   router.get("/adminUsers", adminUsers.users);
+  router.get("/adminEditOrDeleteCard/:deckId/:cardId", adminCards.editOrDeleteCard);
   router.post("/adminSignIn", adminUsers.signIn);
   router.post("/addCard/:deckId", adminCards.saveCard);
   router.post("/addDeck", adminDecks.saveDeck);
   router.post("/addUser", adminUsers.saveNewUser);
   router.post("/adminToggleUserDeck", adminUsers.toggleUserDeck);
+  router.post("/saveCardEdit/:deckId/:cardId", adminCards.saveCardEdit);
+  router.post("/adminDeleteCard/:deckId/:cardId", adminCards.saveCardDelete);
 }
 
 module.exports = router;
