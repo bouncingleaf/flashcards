@@ -2,7 +2,7 @@
 
 ## NEW!
 
-New since this was presented on August 14:
+New since this was presented on August 14, 2018:
 
 ### It is now one app instead of two!
 
